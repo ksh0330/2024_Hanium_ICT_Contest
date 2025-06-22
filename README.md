@@ -42,6 +42,13 @@ VITAS/
 
 ## 🚀 실행 방법
 
+0. Clone the repository:
+
+```bash
+git clone https://github.com/ksh0330/2024_Hanium_ICT_Contest.git
+cd 2024_Hanium_ICT_Contest
+```
+
 1. 필수 라이브러리 설치:
 
 ```bash
