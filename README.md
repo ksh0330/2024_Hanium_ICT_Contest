@@ -35,6 +35,7 @@ VITAS/
 ├── main.py               # 전체 GUI 및 로직 구현 스크립트
 ├── epoch52.pt            # 학습된 YOLOv8 모델
 ├── requirements.txt      # 의존성 리스트
+├── arduino_code.c        # Arduino 코드
 └── README.md             # 프로젝트 문서
 ```
 
