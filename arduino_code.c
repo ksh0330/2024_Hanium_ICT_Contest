@@ -1,22 +1,55 @@
 #include <WiFi.h>
 #include <Adafruit_NeoPixel.h>
 
-#define LED_PIN 8      // LED 핀 번호
-#define BUZZER_PIN 9   // 부저 핀 번호
-#define NUM_PIXELS 7   // NeoPixel 사용 개수
-#define PROCESS_DELAY 2000 // 메시지 처리 후 대기 시간 (밀리초 단위)
+#define LED_PIN 8            // LED pin
+#define BUZZER_PIN 9         // Buzzer pin
+#define NUM_PIXELS 7         // Number of NeoPixels
+#define PROCESS_DELAY 2000   // Delay after processing a message (ms)
 
-const char* ssid = "***"; // Wi-Fi SSID
-const char* password = "***"; // Wi-Fi Password
+const char* ssid = "***";         // Wi-Fi SSID
+const char* password = "***";     // Wi-Fi Password
 
-const char* host = "192.168.0.*"; // 서버 IP 주소
-const int port = 8878; // 서버 포트
+const char* host = "192.168.0.*"; // Server IP address
+const int port = 8878;            // Server port
 
 WiFiClient client;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-String lastMessage = "";  // 마지막으로 수신된 메시지
-unsigned long lastProcessTime = 0; // 마지막으로 메시지를 처리한 시간
+String lastMessage = "";               // Last received message
+unsigned long lastProcessTime = 0;     // Last time a message was processed
+
+void connectToWiFi() {
+  Serial.print("Connecting to WiFi...");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(" connected");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void setLEDColor(uint32_t color) {
+  for (int i = 0; i < NUM_PIXELS; i++) {
+    strip.setPixelColor(i, color);
+  }
+  strip.show();
+}
+
+void handleServerMessage(const String& message) {
+  // Keep Korean status keywords for compatibility with the sender
+  if (message.indexOf("안전") >= 0) {
+    setLEDColor(strip.Color(0, 255, 0)); // Green
+    noTone(BUZZER_PIN);
+  } else if (message.indexOf("주의") >= 0) {
+    setLEDColor(strip.Color(255, 255, 0)); // Yellow
+    noTone(BUZZER_PIN);
+  } else if (message.indexOf("위험") >= 0) {
+    setLEDColor(strip.Color(255, 0, 0)); // Red
+    tone(BUZZER_PIN, 500);
+  }
+}
 
 void setup() {
   Serial.begin(115200);
@@ -36,14 +69,17 @@ void setup() {
 void loop() {
   if (client.connected()) {
     if (client.available()) {
-      String message = client.readStringUntil('\n');
-      Serial.println("Message from server: " + message);
+      String message = client.readStringUntil('\n'); // Expect newline-terminated lines
+      message.trim();
+      if (message.length() > 0) {
+        Serial.println("Message from server: " + message);
+      }
 
-      // 이전 메시지와 다르고, 지정된 시간(PROCESS_DELAY) 이후에만 메시지 처리
-      if (message != lastMessage && millis() - lastProcessTime > PROCESS_DELAY) {  
+      // Process only when message changed and delay elapsed
+      if (message != lastMessage && millis() - lastProcessTime > PROCESS_DELAY) {
         lastMessage = message;
         handleServerMessage(message);
-        lastProcessTime = millis();  // 마지막 처리 시간 갱신
+        lastProcessTime = millis();
       }
     }
   } else {
@@ -51,46 +87,6 @@ void loop() {
     if (client.connect(host, port)) {
       Serial.println("Reconnected to server");
     }
+    delay(250); // Throttle reconnect attempts slightly
   }
-
-  maintainState();  // 현재 상태 유지
-}
-
-void connectToWiFi() {
-  Serial.print("Connecting to WiFi...");
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  
-  Serial.println("Connected to WiFi");
-  Serial.println("IP Address: ");
-  Serial.println(WiFi.localIP());
-}
-
-void handleServerMessage(String message) {
-  if (message.indexOf("안전") >= 0) {
-    setLEDColor(strip.Color(0, 255, 0)); // G
-    noTone(BUZZER_PIN);
-  } else if (message.indexOf("주의") >= 0) {
-    setLEDColor(strip.Color(255, 255, 0)); // Y
-    noTone(BUZZER_PIN); 
-  } else if (message.indexOf("위험") >= 0) {
-    setLEDColor(strip.Color(255, 0, 0)); // R
-    tone(BUZZER_PIN, 500); 
-  }
-}
-
-void setLEDColor(uint32_t color) {
-  for (int i = 0; i < NUM_PIXELS; i++) {
-    strip.setPixelColor(i, color);
-  }
-  strip.show();
-}
-
-void maintainState() {
-  // 현재 상태를 유지하기 위해 아무것도 하지 않음.
-  // 이 함수는 단지 LED와 부저의 상태를 유지하기 위해 필요.
 }
