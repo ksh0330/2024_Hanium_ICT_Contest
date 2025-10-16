@@ -1,6 +1,8 @@
 
 # Vision AI 기반 교차로 충돌 방지 시스템 (VITAS)
 
+> **Note:** 이 저장소는 VITAS 프로젝트의 스포크 저장소입니다. 전체 프로젝트 개요와 문서는 **[Project VITAS](https://github.com/ksh0330/Project-VITAS)** 허브 저장소를 참조하세요.
+
 이 프로젝트는 **보행자 및 차량이 혼재된 교차로에서의 충돌 사고를 방지**하기 위해 Vision AI 기술을 활용하여 개발된 실시간 모니터링 및 예측 시스템입니다.  
 본 시스템은 **2024 ICT 한이음 공모전 입선작** 으로서, 영상 기반 객체 탐지 및 속도 추정을 바탕으로 교차로 내 충돌 가능성을 예측하고 차량을 제어해 교통사고 방지를 할 수 있습니다.  
 [https://www.youtube.com/watch?v=sPzyF6GiYPM](https://www.youtube.com/watch?v=Ftj3xZvBPxM)
@@ -30,8 +32,11 @@
 ## 📁 디렉토리 구조
 
 ```
-VITAS/
+2024_Hanium_ICT_Contest/
 ├── data/                 # 테스트 영상 폴더
+│   ├── Danger.mp4        # 위험 상황 테스트 영상
+│   ├── Safe.mp4          # 안전 상황 테스트 영상
+│   └── Warn.mp4          # 경고 상황 테스트 영상
 ├── main.py               # 전체 GUI 및 로직 구현 스크립트
 ├── epoch52.pt            # 학습된 YOLOv8 모델
 ├── requirements.txt      # 의존성 리스트
