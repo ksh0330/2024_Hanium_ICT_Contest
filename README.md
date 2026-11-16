@@ -38,7 +38,7 @@
 │   ├── Safe.mp4          # 안전 상황 테스트 영상
 │   └── Warn.mp4          # 경고 상황 테스트 영상
 ├── main.py               # 전체 GUI 및 로직 구현 스크립트
-├── epoch52.pt            # 학습된 YOLOv8 모델
+├── epoch52.pt            # 학습된 YOLOv8 모델 (Releases에서 다운로드, Git 미포함)
 ├── requirements.txt      # 의존성 리스트
 ├── arduino_code.c        # Arduino 코드
 └── README.md             # 프로젝트 문서
@@ -61,13 +61,21 @@ cd 2024_Hanium_ICT_Contest
 pip install -r requirements.txt
 ```
 
-2. 테스트 영상(`.mp4`)을 `data/` 폴더에 넣고, `main.py` 내 경로 수정:
+2. 학습된 모델 weight 다운로드:
+
+[Releases](https://github.com/ksh0330/2024_Hanium_ICT_Contest/releases/latest)에서 `epoch52.pt`를 받아 저장소 루트(`main.py`와 같은 위치)에 둡니다.
+
+```bash
+curl -L -o epoch52.pt https://github.com/ksh0330/2024_Hanium_ICT_Contest/releases/download/v1.0/epoch52.pt
+```
+
+3. 테스트 영상(`.mp4`)을 `data/` 폴더에 넣고, `main.py` 내 경로 수정:
 
 ```python
 video_source = "data/your_video.mp4"
 ```
 
-3. 실행:
+4. 실행:
 
 ```bash
 python main.py

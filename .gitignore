@@ -1,0 +1,14 @@
+# Model weights are distributed via GitHub Releases
+*.pt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
